@@ -27,11 +27,17 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		Movement();
+    }
+	
+	void Movement()
+	{
 		float horizontal = Input.GetAxisRaw("Horizontal");
 		float vertical = Input.GetAxisRaw("Vertical");
+		float jump = Input.GetAxisRaw("Jump");
 		
 		Vector3 Direction;
-		Direction = player.transform.forward * vertical + player.transform.right * horizontal;
+		Direction = player.transform.forward * vertical + player.transform.right * horizontal + player.transform.up * jump; 
 		// + player.transform.up * gravity
 		
 		//Force = new Vector3(horizontal, gravity, vertical);
@@ -52,5 +58,6 @@ public class PlayerMovement : MonoBehaviour
 			Vector3 velocityLimitator = velocity.normalized * speedLimit;
 			player.velocity = new Vector3(velocityLimitator.x, player.velocity.y, velocityLimitator.z);
 		}
-    }
+		
+	}
 }
