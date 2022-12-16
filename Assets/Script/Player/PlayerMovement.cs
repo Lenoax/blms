@@ -5,18 +5,21 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 	
-	public Transform camera;
 	Vector3 movement;
 	
 	Rigidbody player;
 	
 	Vector3 Force;
 	
-	public float speed = 1f;
+	public float speed = 1000f;
+	public float speedLimit = 5f;
 	
     // Start is called before the first frame update
     void Start()
     {
+		//Physics.gravity = new Vector3(0, -9.8F, 0);
+		
+		GameObject Camera = GameObject.Find("Main Camera");
 		GameObject JP = GameObject.Find("JP");
         player = JP.GetComponent<Rigidbody>();
     }
@@ -25,23 +28,29 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
 		float horizontal = Input.GetAxisRaw("Horizontal");
-		float moveHorizontal = horizontal * speed;
-
-		
 		float vertical = Input.GetAxisRaw("Vertical");
-		float moveVertical = vertical * speed;
 		
-		Force = new Vector3(horizontal, 0, 0);
+		Vector3 Direction;
+		Direction = player.transform.forward * vertical + player.transform.right * horizontal;
+		// + player.transform.up * gravity
 		
-		player.AddForce(Force);
+		//Force = new Vector3(horizontal, gravity, vertical);
+		//Force = Vector3.Normalize(Force);
+		Direction = Vector3.Normalize(Direction);
 		
 		
+		player.AddForce(Direction * speed);
 		
+		//---------------------------------
+		//-----LIMITADOR DE VELOCIDAD------
+		//---------------------------------
 		
-//		rb.rotation = Quaternion.Euler(camera.rotating.localEulerAngles.x, camera.rotating.localEulerAngles.y, 0f);
+		Vector3 velocity = new Vector3(player.velocity.x, 0f, player.velocity.z);
 		
-//		Vector3 movement = transform.right * horizontal + transform.forward * vertical;
-		
-//		rb.position = new Vector3(transform.forward * vertical, transform.forward * vertical, 0f);
+		if(velocity.magnitude > speedLimit)
+		{
+			Vector3 velocityLimitator = velocity.normalized * speedLimit;
+			player.velocity = new Vector3(velocityLimitator.x, player.velocity.y, velocityLimitator.z);
+		}
     }
 }
